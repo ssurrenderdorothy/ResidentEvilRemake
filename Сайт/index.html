@@ -42,14 +42,18 @@
     setInterval(createHeart, 300);
   </script>
   <!-- Музыка Тёмный принц — Цветы -->
+<!-- Музыка Тёмный принц — Цветы -->
 <audio id="princeMusic" src="temny_prinz.mp3" loop preload="auto"></audio>
 
 <script>
-    document.body.addEventListener('click', function startMusic() {
+    function startMusic() {
         const music = document.getElementById('princeMusic');
-        music.play().catch(e => console.log('Кликните ещё раз'));
+        music.play().catch(e => console.log('Для включения музыки кликните по странице'));
         document.body.removeEventListener('click', startMusic);
-    });
+        document.body.removeEventListener('touchstart', startMusic);
+    }
+    document.body.addEventListener('click', startMusic);
+    document.body.addEventListener('touchstart', startMusic); // для мобильных устройств
 </script>
 </body>
 </html>
