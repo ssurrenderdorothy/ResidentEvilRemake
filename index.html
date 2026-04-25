@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
@@ -21,15 +20,44 @@
 
   <div class="message" id="message">Ира — лучшая девочка на свете</div>
 
+  <!-- МУЗЫКА: ИСПРАВЛЕННАЯ ВЕРСИЯ -->
+  <audio id="princeMusic" src="temny_prinz.mp3" loop preload="auto"></audio>
+
   <script>
-    function openEnvelope() {
+    // Функция для запуска музыки
+    let musicStarted = false;
+    
+    function startMusic() {
+      if (musicStarted) return;
+      const music = document.getElementById('princeMusic');
+      
+      music.play().then(() => {
+        musicStarted = true;
+        console.log('🎵 Музыка играет!');
+      }).catch((error) => {
+        console.log('⚠️ Ошибка:', error.name);
+        // Если не вышло — попробуем ещё раз через 0.5 секунды
+        setTimeout(startMusic, 500);
+      });
+    }
+
+    // СПОСОБ 1: Музыка включается при открытии конверта
+    const originalOpenEnvelope = window.openEnvelope;
+    window.openEnvelope = function() {
+      startMusic();
+      if (originalOpenEnvelope) originalOpenEnvelope();
+      
       document.getElementById("envelope").classList.add("open");
       document.getElementById("instruction").classList.add("hide");
       setTimeout(() => {
         document.getElementById("message").classList.add("show");
       }, 1500);
-    }
+    };
 
+    // СПОСОБ 2: Если вдруг конверт не сработал — по любому клику на страницу
+    window.addEventListener('click', startMusic);
+
+    // Сердечки
     function createHeart() {
       const heart = document.createElement("div");
       heart.classList.add("heart");
@@ -41,15 +69,5 @@
 
     setInterval(createHeart, 300);
   </script>
-<audio id="princeMusic" src="temny_prinz.mp3" loop preload="auto"></audio>
-
-<script>
-    window.addEventListener('click', function startMusic() {
-        var music = document.getElementById('princeMusic');
-        music.play().catch(e => console.log('Кликните ещё раз'));
-        window.removeEventListener('click', startMusic);
-    });
-</script>
 </body>
 </html>
-
