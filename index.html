@@ -18,13 +18,11 @@
     </div>
   </div>
 
-  <div class="message" id="message"> Ира Юрайс — лучшая девочка на свете</div>
+  <div class="message" id="message">Ира Юрайс — лучшая девочка на свете</div>
 
-  <!-- МУЗЫКА: ИСПРАВЛЕННАЯ ВЕРСИЯ -->
   <audio id="princeMusic" src="temny_prinz.mp3" loop preload="auto"></audio>
 
   <script>
-    // Функция для запуска музыки
     let musicStarted = false;
     
     function startMusic() {
@@ -36,25 +34,25 @@
         console.log('🎵 Музыка играет!');
       }).catch((error) => {
         console.log('⚠️ Ошибка:', error.name);
-        // Если не вышло — попробуем ещё раз через 0.5 секунды
-        setTimeout(startMusic, 500);
       });
     }
 
-    // СПОСОБ 1: Музыка включается при открытии конверта
-    const originalOpenEnvelope = window.openEnvelope;
+    // ЕДИНСТВЕННАЯ функция openEnvelope
     window.openEnvelope = function() {
+      // Запускаем музыку
       startMusic();
-      if (originalOpenEnvelope) originalOpenEnvelope();
       
+      // Открываем конверт
       document.getElementById("envelope").classList.add("open");
       document.getElementById("instruction").classList.add("hide");
+      
+      // Показываем сообщение через 1.5 секунды
       setTimeout(() => {
         document.getElementById("message").classList.add("show");
       }, 1500);
     };
 
-    // СПОСОБ 2: Если вдруг конверт не сработал — по любому клику на страницу
+    // Запасной вариант: клик в любом месте включает музыку
     window.addEventListener('click', startMusic);
 
     // Сердечки
