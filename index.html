@@ -41,14 +41,13 @@
 
     setInterval(createHeart, 300);
   </script>
-  <!-- Музыка Тёмный принц — Цветы -->
-<audio id="princeMusic" src="temny_prinz" loop preload="auto"></audio>
+<audio id="princeMusic" src="temny_prinz.mp3" loop preload="auto"></audio>
 
 <script>
-    document.body.addEventListener('click', function startMusic() {
-        const music = document.getElementById('princeMusic');
+    window.addEventListener('click', function startMusic() {
+        var music = document.getElementById('princeMusic');
         music.play().catch(e => console.log('Кликните ещё раз'));
-        document.body.removeEventListener('click', startMusic);
+        window.removeEventListener('click', startMusic);
     });
 </script>
 </body>
