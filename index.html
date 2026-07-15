@@ -52,8 +52,8 @@
   </style>
 </head>
 <body>
-  <div class="envelope-wrapper" id="envelopeWrapper" onclick="handleEnvelopeClick()">
-    <div class="envelope" id="envelope">
+  <div class="envelope-wrapper" id="envelopeWrapper">
+    <div class="envelope" id="envelope" onclick="handleEnvelopeClick(event)">
       <div class="flap"></div>
       <div class="left-flap"></div>
       <div class="right-flap"></div>
@@ -67,8 +67,9 @@
 
   <script>
     let musicStarted = false;
-    let clickCount = 0; // Счётчик кликов
+    let clickCount = 0;
     const wrapper = document.getElementById('envelopeWrapper');
+    const envelope = document.getElementById('envelope');
 
     function startMusic() {
       if (musicStarted) return;
@@ -91,18 +92,17 @@
       hint.style.top = y + 'px';
       document.body.appendChild(hint);
       
-      // Удаляем через 1.5 секунды после анимации
       setTimeout(() => {
         hint.remove();
       }, 1500);
     }
 
     // Обработчик клика по конверту
-    window.handleEnvelopeClick = function() {
+    window.handleEnvelopeClick = function(event) {
+      event.stopPropagation(); // Останавливаем всплытие, чтобы не сработал window.click
       clickCount++;
       
       if (clickCount === 1) {
-        // ПЕРВЫЙ КЛИК - перемещаем в рандомное место
         startMusic();
         
         const maxX = window.innerWidth - 200;
@@ -113,12 +113,11 @@
         wrapper.style.left = randomX + 'px';
         wrapper.style.top = randomY + 'px';
         wrapper.style.transform = 'translate(0, 0)';
+        wrapper.classList.remove('centered');
         
-        // Показываем надпись "не сюда" в месте клика
         showHint('не сюда', event.clientX - 50, event.clientY - 30);
         
       } else if (clickCount === 2) {
-        // ВТОРОЙ КЛИК - снова перемещаем
         const maxX = window.innerWidth - 200;
         const maxY = window.innerHeight - 200;
         const randomX = Math.random() * maxX;
@@ -127,21 +126,18 @@
         wrapper.style.left = randomX + 'px';
         wrapper.style.top = randomY + 'px';
         wrapper.style.transform = 'translate(0, 0)';
+        wrapper.classList.remove('centered');
         
-        // Показываем надпись "ЧЕ НЕ ТАК-ТО"
         showHint('ЧЕ НЕ ТАК-ТО', event.clientX - 60, event.clientY - 30);
         
       } else if (clickCount === 3) {
-        // ТРЕТИЙ КЛИК - открываем по центру
         wrapper.classList.add('centered');
         wrapper.style.left = '50%';
         wrapper.style.top = '50%';
         wrapper.style.transform = 'translate(-50%, -50%)';
         
-        // Открываем конверт
         document.getElementById("envelope").classList.add("open");
         
-        // Показываем сообщение через 1.5 секунды
         setTimeout(() => {
           document.getElementById("message").classList.add("show");
         }, 1500);
