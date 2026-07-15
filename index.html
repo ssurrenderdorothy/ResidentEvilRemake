@@ -6,28 +6,22 @@
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* Добавляем стили для сообщений-подсказок */
+    /* Стили для сообщений-подсказок */
     .hint-message {
       position: fixed;
       font-size: 28px;
       font-weight: bold;
-      color: #ff3366;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-      z-index: 1000;
+      color: black;
+      text-shadow: none;
+      z-index: 5;
       pointer-events: none;
-      animation: floatUp 1.5s ease-out forwards;
       font-family: 'Great Vibes', cursive;
+      opacity: 1;
+      transition: opacity 0.3s ease;
     }
 
-    @keyframes floatUp {
-      0% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-      100% {
-        opacity: 0;
-        transform: translateY(-150px) scale(1.5);
-      }
+    .hint-message.hidden {
+      opacity: 0;
     }
 
     .envelope-wrapper {
@@ -45,7 +39,7 @@
     }
 
     .envelope-wrapper.centered {
-      top: 50% !important;
+      top: 40% !important;
       left: 50% !important;
       transform: translate(-50%, -50%) !important;
     }
@@ -68,6 +62,8 @@
   <script>
     let musicStarted = false;
     let clickCount = 0;
+    let hint1 = null;
+    let hint2 = null;
     const wrapper = document.getElementById('envelopeWrapper');
     const envelope = document.getElementById('envelope');
 
@@ -83,23 +79,20 @@
       });
     }
 
-    // Функция для показа всплывающей надписи
-    function showHint(text, x, y) {
+    // Функция для создания надписи
+    function createHint(text, x, y) {
       const hint = document.createElement('div');
       hint.className = 'hint-message';
       hint.textContent = text;
       hint.style.left = x + 'px';
       hint.style.top = y + 'px';
       document.body.appendChild(hint);
-      
-      setTimeout(() => {
-        hint.remove();
-      }, 1500);
+      return hint;
     }
 
     // Обработчик клика по конверту
     window.handleEnvelopeClick = function(event) {
-      event.stopPropagation(); // Останавливаем всплытие, чтобы не сработал window.click
+      event.stopPropagation();
       clickCount++;
       
       if (clickCount === 1) {
@@ -115,7 +108,16 @@
         wrapper.style.transform = 'translate(0, 0)';
         wrapper.classList.remove('centered');
         
-        showHint('не сюда', event.clientX - 50, event.clientY - 30);
+        // Если была вторая надпись - удаляем её
+        if (hint2) {
+          hint2.remove();
+          hint2 = null;
+        }
+        
+        // Создаем первую надпись, если её нет
+        if (!hint1) {
+          hint1 = createHint('не сюда', event.clientX - 50, event.clientY - 30);
+        }
         
       } else if (clickCount === 2) {
         const maxX = window.innerWidth - 200;
@@ -128,12 +130,31 @@
         wrapper.style.transform = 'translate(0, 0)';
         wrapper.classList.remove('centered');
         
-        showHint('ЧЕ НЕ ТАК-ТО', event.clientX - 60, event.clientY - 30);
+        // Удаляем первую надпись
+        if (hint1) {
+          hint1.remove();
+          hint1 = null;
+        }
+        
+        // Создаем вторую надпись, если её нет
+        if (!hint2) {
+          hint2 = createHint('ЧЕ НЕ ТАК-ТО', event.clientX - 60, event.clientY - 30);
+        }
         
       } else if (clickCount === 3) {
+        // Удаляем все надписи
+        if (hint1) {
+          hint1.remove();
+          hint1 = null;
+        }
+        if (hint2) {
+          hint2.remove();
+          hint2 = null;
+        }
+        
         wrapper.classList.add('centered');
         wrapper.style.left = '50%';
-        wrapper.style.top = '50%';
+        wrapper.style.top = '40%';
         wrapper.style.transform = 'translate(-50%, -50%)';
         
         document.getElementById("envelope").classList.add("open");
