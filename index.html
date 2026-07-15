@@ -5,49 +5,12 @@
   <title>An envelope for Alena</title>
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-  <style>
-    /* Стили для сообщений-подсказок */
-    .hint-message {
-      position: fixed;
-      font-size: 28px;
-      font-weight: bold;
-      color: black;
-      text-shadow: none;
-      z-index: 15;
-      pointer-events: none;
-      font-family: 'Great Vibes', cursive;
-      opacity: 1;
-      transition: opacity 0.3s ease;
-    }
-
-    .hint-message.hidden {
-      opacity: 0;
-    }
-
-    .envelope-wrapper {
-      position: fixed;
-      cursor: pointer;
-      transition: all 0.5s ease;
-      z-index: 10;
-    }
-
-    /* Центрируем конверт изначально */
-    .envelope-wrapper {
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    .envelope-wrapper.centered {
-      top: 30% !important;
-      left: 50% !important;
-      transform: translate(-50%, -50%) !important;
-    }
-  </style>
 </head>
 <body>
-  <div class="envelope-wrapper" id="envelopeWrapper">
-    <div class="envelope" id="envelope" onclick="handleEnvelopeClick(event)">
+  <div class="instruction" id="instruction">Тыкай балда>< </div>
+
+  <div class="envelope-wrapper" onclick="openEnvelope()">
+    <div class="envelope" id="envelope">
       <div class="flap"></div>
       <div class="left-flap"></div>
       <div class="right-flap"></div>
@@ -61,12 +24,7 @@
 
   <script>
     let musicStarted = false;
-    let clickCount = 0;
-    let hint1 = null;
-    let hint2 = null;
-    const wrapper = document.getElementById('envelopeWrapper');
-    const envelope = document.getElementById('envelope');
-
+    
     function startMusic() {
       if (musicStarted) return;
       const music = document.getElementById('princeMusic');
@@ -79,90 +37,19 @@
       });
     }
 
-    // Функция для создания надписи
-    function createHint(text, x, y) {
-      const hint = document.createElement('div');
-      hint.className = 'hint-message';
-      hint.textContent = text;
-      hint.style.left = x + 'px';
-      hint.style.top = (y - 80) + 'px'; // Поднимаем надпись выше, чтобы была над конвертом
-      document.body.appendChild(hint);
-      return hint;
-    }
-
-    // Обработчик клика по конверту
-    window.handleEnvelopeClick = function(event) {
-      event.stopPropagation();
-      clickCount++;
+    // ЕДИНСТВЕННАЯ функция openEnvelope
+    window.openEnvelope = function() {
+      // Запускаем музыку
+      startMusic();
       
-      if (clickCount === 1) {
-        startMusic();
-        
-        const maxX = window.innerWidth - 200;
-        const maxY = window.innerHeight - 200;
-        const randomX = Math.random() * maxX;
-        const randomY = Math.random() * maxY;
-        
-        wrapper.style.left = randomX + 'px';
-        wrapper.style.top = randomY + 'px';
-        wrapper.style.transform = 'translate(0, 0)';
-        wrapper.classList.remove('centered');
-        
-        // Если была вторая надпись - удаляем её
-        if (hint2) {
-          hint2.remove();
-          hint2 = null;
-        }
-        
-        // Создаем первую надпись, если её нет
-        if (!hint1) {
-          hint1 = createHint('не сюда', event.clientX, event.clientY);
-        }
-        
-      } else if (clickCount === 2) {
-        const maxX = window.innerWidth - 200;
-        const maxY = window.innerHeight - 200;
-        const randomX = Math.random() * maxX;
-        const randomY = Math.random() * maxY;
-        
-        wrapper.style.left = randomX + 'px';
-        wrapper.style.top = randomY + 'px';
-        wrapper.style.transform = 'translate(0, 0)';
-        wrapper.classList.remove('centered');
-        
-        // Удаляем первую надпись
-        if (hint1) {
-          hint1.remove();
-          hint1 = null;
-        }
-        
-        // Создаем вторую надпись, если её нет
-        if (!hint2) {
-          hint2 = createHint('ЧЕ НЕ ТАК-ТО', event.clientX, event.clientY);
-        }
-        
-      } else if (clickCount === 3) {
-        // Удаляем все надписи
-        if (hint1) {
-          hint1.remove();
-          hint1 = null;
-        }
-        if (hint2) {
-          hint2.remove();
-          hint2 = null;
-        }
-        
-        wrapper.classList.add('centered');
-        wrapper.style.left = '50%';
-        wrapper.style.top = '30%';
-        wrapper.style.transform = 'translate(-50%, -50%)';
-        
-        document.getElementById("envelope").classList.add("open");
-        
-        setTimeout(() => {
-          document.getElementById("message").classList.add("show");
-        }, 1500);
-      }
+      // Открываем конверт
+      document.getElementById("envelope").classList.add("open");
+      document.getElementById("instruction").classList.add("hide");
+      
+      // Показываем сообщение через 1.5 секунды
+      setTimeout(() => {
+        document.getElementById("message").classList.add("show");
+      }, 1500);
     };
 
     // Запасной вариант: клик в любом месте включает музыку
@@ -178,7 +65,7 @@
       setTimeout(() => heart.remove(), 20000);
     }
 
-    setInterval(createHeart, 800);
+   setInterval(createHeart, 800);
   </script>
 </body>
 </html>
