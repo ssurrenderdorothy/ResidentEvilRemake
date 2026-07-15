@@ -5,11 +5,54 @@
   <title>An envelope for Alena</title>
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Добавляем стили для сообщений-подсказок */
+    .hint-message {
+      position: fixed;
+      font-size: 28px;
+      font-weight: bold;
+      color: #ff3366;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      z-index: 1000;
+      pointer-events: none;
+      animation: floatUp 1.5s ease-out forwards;
+      font-family: 'Great Vibes', cursive;
+    }
+
+    @keyframes floatUp {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-150px) scale(1.5);
+      }
+    }
+
+    .envelope-wrapper {
+      position: fixed;
+      cursor: pointer;
+      transition: all 0.5s ease;
+      z-index: 10;
+    }
+
+    /* Центрируем конверт изначально */
+    .envelope-wrapper {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .envelope-wrapper.centered {
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+    }
+  </style>
 </head>
 <body>
-  <div class="instruction" id="instruction">Тыкай балда>< </div>
-
-  <div class="envelope-wrapper" onclick="openEnvelope()">
+  <div class="envelope-wrapper" id="envelopeWrapper" onclick="handleEnvelopeClick()">
     <div class="envelope" id="envelope">
       <div class="flap"></div>
       <div class="left-flap"></div>
@@ -24,7 +67,9 @@
 
   <script>
     let musicStarted = false;
-    
+    let clickCount = 0; // Счётчик кликов
+    const wrapper = document.getElementById('envelopeWrapper');
+
     function startMusic() {
       if (musicStarted) return;
       const music = document.getElementById('princeMusic');
@@ -37,19 +82,70 @@
       });
     }
 
-    // ЕДИНСТВЕННАЯ функция openEnvelope
-    window.openEnvelope = function() {
-      // Запускаем музыку
-      startMusic();
+    // Функция для показа всплывающей надписи
+    function showHint(text, x, y) {
+      const hint = document.createElement('div');
+      hint.className = 'hint-message';
+      hint.textContent = text;
+      hint.style.left = x + 'px';
+      hint.style.top = y + 'px';
+      document.body.appendChild(hint);
       
-      // Открываем конверт
-      document.getElementById("envelope").classList.add("open");
-      document.getElementById("instruction").classList.add("hide");
-      
-      // Показываем сообщение через 1.5 секунды
+      // Удаляем через 1.5 секунды после анимации
       setTimeout(() => {
-        document.getElementById("message").classList.add("show");
+        hint.remove();
       }, 1500);
+    }
+
+    // Обработчик клика по конверту
+    window.handleEnvelopeClick = function() {
+      clickCount++;
+      
+      if (clickCount === 1) {
+        // ПЕРВЫЙ КЛИК - перемещаем в рандомное место
+        startMusic();
+        
+        const maxX = window.innerWidth - 200;
+        const maxY = window.innerHeight - 200;
+        const randomX = Math.random() * maxX;
+        const randomY = Math.random() * maxY;
+        
+        wrapper.style.left = randomX + 'px';
+        wrapper.style.top = randomY + 'px';
+        wrapper.style.transform = 'translate(0, 0)';
+        
+        // Показываем надпись "не сюда" в месте клика
+        showHint('не сюда', event.clientX - 50, event.clientY - 30);
+        
+      } else if (clickCount === 2) {
+        // ВТОРОЙ КЛИК - снова перемещаем
+        const maxX = window.innerWidth - 200;
+        const maxY = window.innerHeight - 200;
+        const randomX = Math.random() * maxX;
+        const randomY = Math.random() * maxY;
+        
+        wrapper.style.left = randomX + 'px';
+        wrapper.style.top = randomY + 'px';
+        wrapper.style.transform = 'translate(0, 0)';
+        
+        // Показываем надпись "ЧЕ НЕ ТАК-ТО"
+        showHint('ЧЕ НЕ ТАК-ТО', event.clientX - 60, event.clientY - 30);
+        
+      } else if (clickCount === 3) {
+        // ТРЕТИЙ КЛИК - открываем по центру
+        wrapper.classList.add('centered');
+        wrapper.style.left = '50%';
+        wrapper.style.top = '50%';
+        wrapper.style.transform = 'translate(-50%, -50%)';
+        
+        // Открываем конверт
+        document.getElementById("envelope").classList.add("open");
+        
+        // Показываем сообщение через 1.5 секунды
+        setTimeout(() => {
+          document.getElementById("message").classList.add("show");
+        }, 1500);
+      }
     };
 
     // Запасной вариант: клик в любом месте включает музыку
@@ -65,7 +161,7 @@
       setTimeout(() => heart.remove(), 20000);
     }
 
-   setInterval(createHeart, 800);
+    setInterval(createHeart, 800);
   </script>
 </body>
 </html>
