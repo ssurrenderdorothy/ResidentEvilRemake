@@ -13,7 +13,7 @@
       font-weight: bold;
       color: black;
       text-shadow: none;
-      z-index: 5;
+      z-index: 15;
       pointer-events: none;
       font-family: 'Great Vibes', cursive;
       opacity: 1;
@@ -39,7 +39,7 @@
     }
 
     .envelope-wrapper.centered {
-      top: 40% !important;
+      top: 30% !important;
       left: 50% !important;
       transform: translate(-50%, -50%) !important;
     }
@@ -85,7 +85,7 @@
       hint.className = 'hint-message';
       hint.textContent = text;
       hint.style.left = x + 'px';
-      hint.style.top = y + 'px';
+      hint.style.top = (y - 80) + 'px'; // Поднимаем надпись выше, чтобы была над конвертом
       document.body.appendChild(hint);
       return hint;
     }
@@ -116,7 +116,7 @@
         
         // Создаем первую надпись, если её нет
         if (!hint1) {
-          hint1 = createHint('не сюда', event.clientX - 50, event.clientY - 30);
+          hint1 = createHint('не сюда', event.clientX, event.clientY);
         }
         
       } else if (clickCount === 2) {
@@ -138,7 +138,7 @@
         
         // Создаем вторую надпись, если её нет
         if (!hint2) {
-          hint2 = createHint('ЧЕ НЕ ТАК-ТО', event.clientX - 60, event.clientY - 30);
+          hint2 = createHint('ЧЕ НЕ ТАК-ТО', event.clientX, event.clientY);
         }
         
       } else if (clickCount === 3) {
@@ -154,7 +154,7 @@
         
         wrapper.classList.add('centered');
         wrapper.style.left = '50%';
-        wrapper.style.top = '40%';
+        wrapper.style.top = '30%';
         wrapper.style.transform = 'translate(-50%, -50%)';
         
         document.getElementById("envelope").classList.add("open");
